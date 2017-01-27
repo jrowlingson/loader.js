@@ -117,8 +117,9 @@ var define, requireModule, require, requirejs;
     throw new Error('Could not find module ' + name);
   }
   requirejs = require = requireModule = function(name) {
-    var mod = registry[name];
+    adopt();
 
+    var mod = registry[name];
 
     if (mod && mod.callback instanceof Alias) {
       mod = registry[mod.callback.name];
@@ -162,6 +163,22 @@ var define, requireModule, require, requirejs;
 
     return (seen[name] = obj);
   };
+
+  function adopt() {
+    if(typeof adoptable !== 'undefined') {
+
+      adopt = Function(''); // run once
+
+      for(var i = 0, l = adoptable.length; i < l; i++) {
+        var adoptee = adoptable[i];
+        
+        if (adoptee !== undefined) {
+          registry[adoptee.name] = new Module(adoptee.name, [], []);
+          seen[adoptee.name] = adoptee.obj['default'] = adoptee.obj;
+        }
+      }
+    }
+  }
 
   function resolve(child, name) {
     if (child.charAt(0) !== '.') { return child; }

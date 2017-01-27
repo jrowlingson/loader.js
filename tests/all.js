@@ -363,3 +363,13 @@ test('foo foo/index are the same thing', function() {
 
   deepEqual(require('foo'), require('foo/index'));
 });
+
+test('adopt externally loaded modules', function() {
+  adoptable = [
+    { name: 'foo/a', obj: { baz: 'baz' } },
+    { name: 'foo/b', obj: { qux: 'qux' } },
+  ];
+
+  equal(require('foo/a').baz, 'baz');
+  equal(require('foo/b').qux, 'qux');
+});
